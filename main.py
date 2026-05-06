@@ -1,10 +1,15 @@
 from lecture.scenes import (
     AdaptivePrecisionSegment as _AdaptivePrecisionSegment,
+    ConventionalSystemSegment as _ConventionalSystemSegment,
     FieldLayoutSegment as _FieldLayoutSegment,
     FixedWidthLimitsSegment as _FixedWidthLimitsSegment,
     FloatingPointLecture as _FloatingPointLecture,
     IEEERefinementsSegment as _IEEERefinementsSegment,
 )
+
+
+class ConventionalSystemSegment(_ConventionalSystemSegment):
+    pass
 
 
 class FixedWidthLimitsSegment(_FixedWidthLimitsSegment):
@@ -27,6 +32,7 @@ class FloatingPointLecture(_FloatingPointLecture):
     pass
 
 __all__ = [
+    "ConventionalSystemSegment",
     "FixedWidthLimitsSegment",
     "AdaptivePrecisionSegment",
     "FieldLayoutSegment",

@@ -6,11 +6,12 @@ Build the lecture as short segments, then combine them in post.
 
 Current renderable segments:
 
-1. `FixedWidthLimitsSegment`
-2. `AdaptivePrecisionSegment`
-3. `FieldLayoutSegment`
-4. `IEEERefinementsSegment`
-5. `FloatingPointLecture` for the stitched full run
+1. `ConventionalSystemSegment`
+2. `FixedWidthLimitsSegment`
+3. `AdaptivePrecisionSegment`
+4. `FieldLayoutSegment`
+5. `IEEERefinementsSegment`
+6. `FloatingPointLecture` for the stitched full run
 
 ## Recommended Teaching Order
 

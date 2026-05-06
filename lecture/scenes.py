@@ -1,9 +1,11 @@
 from manim import *
 
 from .content import (
+    play_decimal_positions_section,
     play_fields_section,
+    play_fixed_width_section,
     play_ieee_section,
-    play_problem_section,
+    play_opening_questions,
     play_scientific_notation_section,
 )
 from .style import make_section_title, make_title_card
@@ -32,7 +34,14 @@ class LectureScene(Scene):
 class FixedWidthLimitsSegment(LectureScene):
     def construct(self):
         self.show_header()
-        play_problem_section(self)
+        play_fixed_width_section(self)
+
+
+class ConventionalSystemSegment(LectureScene):
+    def construct(self):
+        self.show_header()
+        play_opening_questions(self)
+        play_decimal_positions_section(self)
 
 
 class AdaptivePrecisionSegment(LectureScene):
@@ -56,7 +65,9 @@ class IEEERefinementsSegment(LectureScene):
 class FloatingPointLecture(LectureScene):
     def construct(self):
         self.show_header()
-        play_problem_section(self)
+        play_opening_questions(self)
+        play_decimal_positions_section(self)
+        play_fixed_width_section(self)
         play_scientific_notation_section(self)
         play_fields_section(self)
         play_ieee_section(self)

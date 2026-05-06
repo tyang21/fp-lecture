@@ -1,5 +1,6 @@
 from .scenes import (
     AdaptivePrecisionSegment,
+    ConventionalSystemSegment,
     FieldLayoutSegment,
     FixedWidthLimitsSegment,
     FloatingPointLecture,
@@ -7,6 +8,7 @@ from .scenes import (
 )
 
 __all__ = [
+    "ConventionalSystemSegment",
     "FixedWidthLimitsSegment",
     "AdaptivePrecisionSegment",
     "FieldLayoutSegment",
