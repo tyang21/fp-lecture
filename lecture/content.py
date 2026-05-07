@@ -196,6 +196,104 @@ def play_decimal_positions_section(scene):
         place_values,
     )
 
+    count_intro = Text(
+        "In our conventional system, each position has 10 possible digits.",
+        color=WHITE,
+        weight=BOLD,
+    ).scale(0.38)
+    count_intro.move_to(UP * 2.1)
+
+    one_position_title = Text("One position", color=BLUE_D).scale(0.34)
+    one_position_title.move_to(UP * 1.15)
+
+    digit_box = RoundedRectangle(width=1.3, height=1.35, corner_radius=0.14, color=WHITE, stroke_width=4)
+    digit_box.move_to(ORIGIN)
+    current_digit = Text("0", color=YELLOW_D, weight=BOLD).scale(1.25)
+    current_digit.move_to(digit_box)
+
+    one_position_summary = VGroup(
+        Text("1 position", color=BLUE_D, weight=BOLD).scale(0.3),
+        Text("10 numbers", color=ORANGE, weight=BOLD).scale(0.34),
+    ).arrange(DOWN, buff=0.08)
+    one_position_summary.move_to(DOWN * 2.45 + LEFT * 2.4)
+
+    two_position_summary = VGroup(
+        Text("2 positions", color=TEAL_D, weight=BOLD).scale(0.3),
+        Text("100 numbers", color=ORANGE, weight=BOLD).scale(0.34),
+    ).arrange(DOWN, buff=0.08)
+    two_position_summary.move_to(DOWN * 2.45 + RIGHT * 2.4)
+
+    summary_divider = Line(LEFT * 0.2, RIGHT * 0.2, color=GRAY_B, stroke_width=3)
+    summary_divider.rotate(PI / 2)
+    summary_divider.move_to(DOWN * 2.45)
+
+    two_position_title = Text("Two positions", color=TEAL_D).scale(0.34)
+    two_position_title.move_to(UP * 1.15)
+
+    left_box = RoundedRectangle(width=1.3, height=1.35, corner_radius=0.14, color=WHITE, stroke_width=4)
+    right_box = RoundedRectangle(width=1.3, height=1.35, corner_radius=0.14, color=WHITE, stroke_width=4)
+    two_digit_boxes = VGroup(left_box, right_box).arrange(RIGHT, buff=0.32).move_to(ORIGIN)
+    left_digit = Text("0", color=YELLOW_D, weight=BOLD).scale(1.25).move_to(left_box)
+    right_digit = Text("0", color=YELLOW_D, weight=BOLD).scale(1.25).move_to(right_box)
+
+    pattern_intro = Text("We can establish a pattern here:", color=BLUE_D).scale(0.34)
+    pattern_intro.move_to(DOWN * 1.45)
+
+    pattern = MathTex(
+        r"\text{Amount of numbers representable} = 10^{\left(\#\text{ of positions}\right)}"
+    ).scale(0.78)
+    pattern.set_color(YELLOW_D)
+    pattern.next_to(pattern_intro, DOWN, buff=0.28)
+
+    scene.play(FadeIn(count_intro, shift=0.15 * DOWN), run_time=1.2)
+    scene.wait(0.8)
+    scene.play(FadeIn(one_position_title, shift=0.15 * RIGHT), Create(digit_box), FadeIn(current_digit), run_time=1.0)
+    scene.play(FadeIn(one_position_summary), run_time=0.8)
+
+    for value in range(1, 10):
+        next_digit = Text(str(value), color=YELLOW_D, weight=BOLD).scale(1.25)
+        next_digit.move_to(digit_box)
+        scene.play(Transform(current_digit, next_digit), run_time=0.28)
+
+    scene.wait(1.0)
+    scene.play(FadeIn(summary_divider), run_time=0.5)
+    scene.play(
+        FadeOut(one_position_title, shift=0.1 * UP),
+        FadeIn(two_position_title, shift=0.1 * UP),
+        Transform(digit_box, two_digit_boxes),
+        Transform(current_digit, right_digit),
+        run_time=1.1,
+    )
+    scene.play(FadeIn(left_digit), FadeIn(two_position_summary), run_time=0.8)
+
+    two_digit_values = [("0", "1"), ("0", "9"), ("1", "0"), ("4", "2"), ("9", "9")]
+    for left_value, right_value in two_digit_values:
+        next_left = Text(left_value, color=YELLOW_D, weight=BOLD).scale(1.25).move_to(left_box)
+        next_right = Text(right_value, color=YELLOW_D, weight=BOLD).scale(1.25).move_to(right_box)
+        scene.play(
+            Transform(left_digit, next_left),
+            Transform(current_digit, next_right),
+            run_time=0.45,
+        )
+
+    scene.wait(1.2)
+    scene.play(FadeIn(pattern_intro, shift=0.15 * DOWN), run_time=0.9)
+    scene.play(Write(pattern), run_time=1.6)
+    scene.wait(2.2)
+    clear_stage(
+        scene,
+        count_intro,
+        two_position_title,
+        digit_box,
+        current_digit,
+        left_digit,
+        one_position_summary,
+        summary_divider,
+        two_position_summary,
+        pattern_intro,
+        pattern,
+    )
+
 
 def play_scientific_notation_section(scene):
     section = make_section_title("2. The core idea: adaptive precision")

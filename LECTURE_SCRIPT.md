@@ -28,6 +28,16 @@ The rightmost digit is in the least significant position.
 
 In decimal, those positions correspond to hundreds, tens, and ones.
 
+In our conventional system, each position has 10 possible digits.
+
+For a number with a single position, we can represent 10 numbers: 0 through 9.
+
+For a number with two positions, we can represent 100 numbers: 0 through 99.
+
+We can establish a pattern here:
+
+Amount of numbers able to be represented = `10^(# of positions)`
+
 ## Segment 2: Why Fixed-Width Integers Are Not Enough
 
 Computers only get a finite number of bits.
