@@ -239,11 +239,13 @@ def play_decimal_positions_section(scene):
     pattern_intro = Text("We can establish a pattern here:", color=BLUE_D).scale(0.34)
     pattern_intro.move_to(DOWN * 1.45)
 
-    pattern = MathTex(
-        r"\text{Amount of numbers representable} = 10^{\left(\#\text{ of positions}\right)}"
-    ).scale(0.78)
-    pattern.set_color(YELLOW_D)
-    pattern.next_to(pattern_intro, DOWN, buff=0.28)
+    pattern_lhs = MathTex(r"\text{Amount of numbers representable} =", color=WHITE).scale(0.78)
+    pattern_base = MathTex(r"10", color=YELLOW_D).scale(0.78)
+    pattern_exp = MathTex(r"\#\text{ of positions}", color=TEAL_D).scale(0.52)
+    exponent_group = VGroup(pattern_base, pattern_exp)
+    pattern_exp.next_to(pattern_base, UP + RIGHT, buff=0.02)
+    pattern = VGroup(pattern_lhs, exponent_group).arrange(RIGHT, buff=0.08, aligned_edge=DOWN)
+    pattern.move_to(DOWN * 2.25)
 
     scene.play(FadeIn(count_intro, shift=0.15 * DOWN), run_time=1.2)
     scene.wait(0.8)
@@ -253,7 +255,7 @@ def play_decimal_positions_section(scene):
     for value in range(1, 10):
         next_digit = Text(str(value), color=YELLOW_D, weight=BOLD).scale(1.25)
         next_digit.move_to(digit_box)
-        scene.play(Transform(current_digit, next_digit), run_time=0.28)
+        scene.play(Transform(current_digit, next_digit), run_time=0.1)
 
     scene.wait(1.0)
     scene.play(FadeIn(summary_divider), run_time=0.5)
@@ -266,19 +268,26 @@ def play_decimal_positions_section(scene):
     )
     scene.play(FadeIn(left_digit), FadeIn(two_position_summary), run_time=0.8)
 
-    two_digit_values = [("0", "1"), ("0", "9"), ("1", "0"), ("4", "2"), ("9", "9")]
-    for left_value, right_value in two_digit_values:
+    for value in range(1, 100):
+        left_value, right_value = f"{value:02d}"
         next_left = Text(left_value, color=YELLOW_D, weight=BOLD).scale(1.25).move_to(left_box)
         next_right = Text(right_value, color=YELLOW_D, weight=BOLD).scale(1.25).move_to(right_box)
         scene.play(
             Transform(left_digit, next_left),
             Transform(current_digit, next_right),
-            run_time=0.45,
+            run_time=0.04,
         )
 
     scene.wait(1.2)
+    scene.play(
+        FadeOut(one_position_summary, shift=0.15 * DOWN),
+        FadeOut(summary_divider, shift=0.15 * DOWN),
+        FadeOut(two_position_summary, shift=0.15 * DOWN),
+        run_time=0.6,
+    )
     scene.play(FadeIn(pattern_intro, shift=0.15 * DOWN), run_time=0.9)
     scene.play(Write(pattern), run_time=1.6)
+    scene.wait(1.1)
     scene.wait(2.2)
     clear_stage(
         scene,
