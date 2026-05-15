@@ -17,8 +17,8 @@ def play_opening_questions(scene):
     ).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
 
     question_two = VGroup(
-        Text("2. With only a limited number of bits,", color=TEAL_D).scale(0.34),
-        Text("how do we represent as many useful numbers as possible?", color=TEAL_D).scale(0.34),
+        Text("2. With only a limited number of bits,", color=GREEN_D).scale(0.34),
+        Text("how do we represent as many useful numbers as possible?", color=GREEN_D).scale(0.34),
     ).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
 
     questions = VGroup(question_one, question_two).arrange(DOWN, aligned_edge=LEFT, buff=0.32)
@@ -77,10 +77,6 @@ def play_fixed_width_section(scene):
 
 
 def play_decimal_positions_section(scene):
-    section = make_section_title("1. Conventional positional notation")
-    section.scale(0.9)
-    section.move_to(ORIGIN)
-
     digits = VGroup(
         Text("1", color=YELLOW_D, weight=BOLD).scale(1.4),
         Text("8", color=YELLOW_D, weight=BOLD).scale(1.4),
@@ -88,18 +84,11 @@ def play_decimal_positions_section(scene):
     ).arrange(RIGHT, buff=0.55)
     digits.move_to(ORIGIN)
 
-    intro = Text(
-        "First, it is important to recognize our constraints.",
-        color=WHITE,
-        weight=BOLD,
-    ).scale(0.38)
-    intro.next_to(digits, UP, buff=1.65)
-
     setup = Text(
-        "Consider a conventional decimal system. Let us establish some terminology here:",
-        color=BLUE_D,
-    ).scale(0.32)
-    setup.next_to(intro, DOWN, buff=0.28)
+        "Consider a conventional decimal system",
+        color=WHITE,
+    ).scale(0.34)
+    setup.next_to(digits, UP, buff=1.6)
 
     underlines = VGroup(
         Line(LEFT * 0.3, RIGHT * 0.3, color=WHITE, stroke_width=6),
@@ -162,12 +151,6 @@ def play_decimal_positions_section(scene):
     position_label = Text("Each digit occupies a position.", color=ORANGE).scale(0.3)
     position_label.next_to(place_values, DOWN, buff=0.38)
 
-    scene.play(FadeIn(section, shift=0.1 * DOWN), run_time=1.0)
-    scene.wait(0.3)
-    scene.play(section.animate.move_to(UP * 2.55), run_time=1.0)
-    scene.wait(0.4)
-    scene.play(FadeIn(intro, shift=0.15 * DOWN), run_time=1.3)
-    scene.wait(0.5)
     scene.play(FadeIn(setup, shift=0.15 * DOWN), run_time=1.2)
     scene.wait(0.7)
     scene.play(LaggedStart(*[FadeIn(digit, shift=0.1 * UP) for digit in digits], lag_ratio=0.22), run_time=2.0)
@@ -183,8 +166,6 @@ def play_decimal_positions_section(scene):
     scene.wait(2.0)
     clear_stage(
         scene,
-        section,
-        intro,
         setup,
         digits,
         underlines,
@@ -235,17 +216,217 @@ def play_decimal_positions_section(scene):
     two_digit_boxes = VGroup(left_box, right_box).arrange(RIGHT, buff=0.32).move_to(ORIGIN)
     left_digit = Text("0", color=YELLOW_D, weight=BOLD).scale(1.25).move_to(left_box)
     right_digit = Text("0", color=YELLOW_D, weight=BOLD).scale(1.25).move_to(right_box)
+    two_digit_value = ValueTracker(0)
+    left_digit_live = always_redraw(
+        lambda: Text(
+            f"{int(two_digit_value.get_value()):02d}"[0],
+            color=YELLOW_D,
+            weight=BOLD,
+        )
+        .scale(1.25)
+        .move_to(left_box)
+    )
+    right_digit_live = always_redraw(
+        lambda: Text(
+            f"{int(two_digit_value.get_value()):02d}"[1],
+            color=YELLOW_D,
+            weight=BOLD,
+        )
+        .scale(1.25)
+        .move_to(right_box)
+    )
 
     pattern_intro = Text("We can establish a pattern here:", color=BLUE_D).scale(0.34)
     pattern_intro.move_to(DOWN * 1.45)
 
     pattern_lhs = MathTex(r"\text{Amount of numbers representable} =", color=WHITE).scale(0.78)
-    pattern_base = MathTex(r"10", color=YELLOW_D).scale(0.78)
-    pattern_exp = MathTex(r"\#\text{ of positions}", color=TEAL_D).scale(0.52)
-    exponent_group = VGroup(pattern_base, pattern_exp)
-    pattern_exp.next_to(pattern_base, UP + RIGHT, buff=0.02)
-    pattern = VGroup(pattern_lhs, exponent_group).arrange(RIGHT, buff=0.08, aligned_edge=DOWN)
+    pattern_base_ten = MathTex("10", color=YELLOW_D).scale(0.78)
+    pattern_exponent = MathTex(r"\left(\#\text{ of positions}\right)", color=TEAL_D).scale(0.52)
+    pattern_exponent.next_to(pattern_base_ten, UR, buff=0.02).shift(0.04 * LEFT + 0.03 * DOWN)
+    pattern_rhs = VGroup(pattern_base_ten, pattern_exponent)
+    pattern = VGroup(pattern_lhs, pattern_rhs).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
+    pattern_rhs.shift((pattern_lhs.get_bottom()[1] - pattern_base_ten.get_bottom()[1]) * UP + 0.06 * UP)
     pattern.move_to(DOWN * 2.25)
+    base_word = Text("base", color=WHITE, weight=BOLD).scale(0.62)
+    base_ten_copy = MathTex("10", color=WHITE).scale(1.08)
+    base_ten_callout = VGroup(base_word, base_ten_copy).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
+    base_ten_callout.move_to(DOWN * 3.15)
+    base_ten_highlight = SurroundingRectangle(
+        base_ten_callout,
+        color=YELLOW_D,
+        buff=0.12,
+        corner_radius=0.08,
+        stroke_width=4,
+    )
+    fixed_relation_intro = Text("The relationships between numbers are fixed.", color=WHITE, weight=BOLD).scale(0.32)
+    fixed_relation_intro.move_to(UP * 1.35)
+    fixed_relation_examples = VGroup(
+        MathTex("2", ">", "1").scale(0.82),
+        MathTex("2", "=", "1", "+", "1").scale(0.82),
+        MathTex("10", "=", "9", "+", "1").scale(0.82),
+    ).arrange(RIGHT, buff=0.55)
+    fixed_relation_examples.next_to(fixed_relation_intro, DOWN, buff=0.38)
+    fixed_relation_examples[0][0].set_color(YELLOW_D)
+    fixed_relation_examples[0][2].set_color(TEAL_D)
+    fixed_relation_examples[1][0].set_color(YELLOW_D)
+    fixed_relation_examples[1][2].set_color(TEAL_D)
+    fixed_relation_examples[1][4].set_color(TEAL_D)
+    fixed_relation_examples[2][0].set_color(YELLOW_D)
+    fixed_relation_examples[2][2].set_color(TEAL_D)
+    fixed_relation_examples[2][4].set_color(TEAL_D)
+    ordering_constant = Text("Ordering is constant", color=WHITE, weight=BOLD).scale(0.5)
+    arithmetic_predictable = Text("Arithmetic behaves predictably", color=WHITE, weight=BOLD).scale(0.5)
+    fixed_relation_caption = VGroup(ordering_constant, arithmetic_predictable).arrange(DOWN, buff=0.20)
+    fixed_relation_caption.next_to(fixed_relation_examples, DOWN, buff=0.67)
+    fixed_relation_caption_box = SurroundingRectangle(
+        fixed_relation_caption,
+        color=WHITE,
+        buff=0.14,
+        corner_radius=0.08,
+        stroke_width=3,
+    )
+
+    ninety_five = MathTex("95", color=YELLOW_D).scale(1.25)
+    ninety_five.move_to(UP * 1.05)
+    ninety_five_breakdown = MathTex("95", "=", "90", "+", "5").scale(0.95)
+    ninety_five_breakdown.move_to(ORIGIN)
+    ninety_five_breakdown[0].set_color(YELLOW_D)
+    ninety_five_breakdown[2].set_color(BLUE_D)
+    ninety_five_breakdown[4].set_color(TEAL_D)
+    ninety_five_expanded = MathTex("=", "9", r"\cdot", "10^1", "+", "5", r"\cdot", "10^0").scale(0.9)
+    ninety_five_expanded.next_to(ninety_five_breakdown, DOWN, buff=0.34, aligned_edge=LEFT)
+    ninety_five_expanded[1].set_color(BLUE_D)
+    ninety_five_expanded[3].set_color(YELLOW_D)
+    ninety_five_expanded[5].set_color(TEAL_D)
+    ninety_five_expanded[7].set_color(YELLOW_D)
+    place_value_caption = Text("Each digit carries a fixed place value in base 10.", color=WHITE).scale(0.29)
+    place_value_caption.next_to(ninety_five_expanded, DOWN, buff=0.32)
+
+    binary_intro = Text(
+        "Binary uses the same idea, but each position only has 2 digits: 0 and 1.",
+        color=WHITE,
+        weight=BOLD,
+    ).scale(0.32)
+    binary_intro.move_to(UP * 2.15)
+    binary_bit_note = Text("Each binary digit is called a bit.", color=GREEN_D, weight=BOLD).scale(0.3)
+    binary_bit_note.next_to(binary_intro, DOWN, buff=0.28)
+    binary_one_position_title = Text("One position", color=BLUE_D).scale(0.34)
+    binary_one_position_title.move_to(UP * 1.15)
+    binary_digit_box = RoundedRectangle(width=1.3, height=1.35, corner_radius=0.14, color=WHITE, stroke_width=4)
+    binary_digit_box.move_to(ORIGIN)
+    binary_current_digit = Text("0", color=GREEN_D, weight=BOLD).scale(1.25)
+    binary_current_digit.move_to(binary_digit_box)
+    binary_one_position_summary = VGroup(
+        Text("1 position", color=BLUE_D, weight=BOLD).scale(0.3),
+        Text("2 numbers", color=ORANGE, weight=BOLD).scale(0.34),
+    ).arrange(DOWN, buff=0.08)
+    binary_one_position_summary.move_to(DOWN * 2.45 + LEFT * 2.4)
+
+    binary_two_position_title = Text("Two positions", color=TEAL_D).scale(0.34)
+    binary_two_position_title.move_to(UP * 1.15)
+    binary_summary_divider = Line(LEFT * 0.2, RIGHT * 0.2, color=GRAY_B, stroke_width=3)
+    binary_summary_divider.rotate(PI / 2)
+    binary_summary_divider.move_to(DOWN * 2.45)
+    binary_two_position_summary = VGroup(
+        Text("2 positions", color=TEAL_D, weight=BOLD).scale(0.3),
+        Text("4 numbers", color=ORANGE, weight=BOLD).scale(0.34),
+    ).arrange(DOWN, buff=0.08)
+    binary_two_position_summary.move_to(DOWN * 2.45 + RIGHT * 2.4)
+    binary_left_box = RoundedRectangle(width=1.3, height=1.35, corner_radius=0.14, color=WHITE, stroke_width=4)
+    binary_right_box = RoundedRectangle(width=1.3, height=1.35, corner_radius=0.14, color=WHITE, stroke_width=4)
+    binary_two_digit_boxes = VGroup(binary_left_box, binary_right_box).arrange(RIGHT, buff=0.32).move_to(ORIGIN)
+    binary_left_digit = Text("0", color=GREEN_D, weight=BOLD).scale(1.25).move_to(binary_left_box)
+    binary_right_digit = Text("0", color=GREEN_D, weight=BOLD).scale(1.25).move_to(binary_right_box)
+    binary_two_digit_value = ValueTracker(0)
+    binary_left_digit_live = always_redraw(
+        lambda: Text(
+            f"{int(binary_two_digit_value.get_value()):02b}"[0],
+            color=GREEN_D,
+            weight=BOLD,
+        )
+        .scale(1.25)
+        .move_to(binary_left_box)
+    )
+    binary_right_digit_live = always_redraw(
+        lambda: Text(
+            f"{int(binary_two_digit_value.get_value()):02b}"[1],
+            color=GREEN_D,
+            weight=BOLD,
+        )
+        .scale(1.25)
+        .move_to(binary_right_box)
+    )
+
+    binary_pattern_intro = Text("Applying the same rule:", color=BLUE_D).scale(0.34)
+    binary_pattern_intro.move_to(DOWN * 1.45)
+    binary_pattern_lhs = MathTex(r"\text{Amount of numbers representable} =", color=WHITE).scale(0.78)
+    binary_pattern_base_two = MathTex("2", color=YELLOW_D).scale(0.78)
+    binary_pattern_exponent = MathTex(r"\left(\#\text{ of positions}\right)", color=TEAL_D).scale(0.52)
+    binary_pattern_exponent.next_to(binary_pattern_base_two, UR, buff=0.02).shift(0.04 * LEFT + 0.03 * DOWN)
+    binary_pattern_rhs = VGroup(binary_pattern_base_two, binary_pattern_exponent)
+    binary_pattern = VGroup(binary_pattern_lhs, binary_pattern_rhs).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
+    binary_pattern_rhs.shift((binary_pattern_lhs.get_bottom()[1] - binary_pattern_base_two.get_bottom()[1]) * UP + 0.06 * UP)
+    binary_pattern.move_to(DOWN * 2.25)
+    binary_pattern.center().shift(DOWN * 2.25)
+    binary_base_word = Text("base", color=WHITE, weight=BOLD).scale(0.62)
+    binary_base_two_copy = MathTex("2", color=WHITE).scale(1.08)
+    binary_base_callout = VGroup(binary_base_word, binary_base_two_copy).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
+    binary_base_callout.move_to(DOWN * 3.15)
+    binary_base_highlight = SurroundingRectangle(
+        binary_base_callout,
+        color=GREEN_D,
+        buff=0.12,
+        corner_radius=0.08,
+        stroke_width=4,
+    )
+
+    binary_relation_intro = Text("The same guarantees still hold in base 2.", color=WHITE, weight=BOLD).scale(0.32)
+    binary_relation_intro.move_to(UP * 1.35)
+    binary_relation_examples = VGroup(
+        MathTex("0", "+", "1", "=", "1").scale(0.82),
+        MathTex("1", "+", "1", "=", "10").scale(0.82),
+        MathTex("10", "+", "1", "=", "11").scale(0.82),
+    ).arrange(RIGHT, buff=0.48)
+    binary_relation_examples.next_to(binary_relation_intro, DOWN, buff=0.38)
+    binary_relation_examples[0][2].set_color(GREEN_D)
+    binary_relation_examples[0][4].set_color(GREEN_D)
+    binary_relation_examples[1][0].set_color(GREEN_D)
+    binary_relation_examples[1][2].set_color(GREEN_D)
+    binary_relation_examples[1][4].set_color(GREEN_D)
+    binary_relation_examples[2][0].set_color(GREEN_D)
+    binary_relation_examples[2][2].set_color(GREEN_D)
+    binary_relation_examples[2][4].set_color(GREEN_D)
+    binary_ordering_constant = Text("Ordering is constant", color=WHITE, weight=BOLD).scale(0.5)
+    binary_arithmetic_predictable = Text("Arithmetic behaves predictably", color=WHITE, weight=BOLD).scale(0.5)
+    binary_relation_caption = VGroup(binary_ordering_constant, binary_arithmetic_predictable).arrange(DOWN, buff=0.20)
+    binary_relation_caption.next_to(binary_relation_examples, DOWN, buff=0.67)
+    binary_relation_caption_box = SurroundingRectangle(
+        binary_relation_caption,
+        color=WHITE,
+        buff=0.14,
+        corner_radius=0.08,
+        stroke_width=3,
+    )
+
+    binary_101 = MathTex("101", color=GREEN_D).scale(1.25)
+    binary_101.move_to(UP * 1.05)
+    binary_101_breakdown = MathTex("101", "=", "1", r"\cdot", "2^2", "+", "1", r"\cdot", "2^0").scale(0.92)
+    binary_101_breakdown.move_to(ORIGIN)
+    binary_101_breakdown[0].set_color(GREEN_D)
+    binary_101_breakdown[2].set_color(BLUE_D)
+    binary_101_breakdown[4].set_color(GREEN_D)
+    binary_101_breakdown[6].set_color(TEAL_D)
+    binary_101_breakdown[8].set_color(GREEN_D)
+    binary_101_expanded = MathTex("=", "4", "+", "1", "=", "5").scale(0.92)
+    binary_101_expanded.next_to(binary_101_breakdown, DOWN, buff=0.34)
+    binary_101_expanded[1].set_color(BLUE_D)
+    binary_101_expanded[3].set_color(TEAL_D)
+    binary_101_expanded[5].set_color(YELLOW_D)
+    binary_place_value_caption = Text(
+        "Same concept: convert to base 10 by summing the active powers of 2.",
+        color=WHITE,
+    ).scale(0.29)
+    binary_place_value_caption.next_to(binary_101_expanded, DOWN, buff=0.32)
 
     scene.play(FadeIn(count_intro, shift=0.15 * DOWN), run_time=1.2)
     scene.wait(0.8)
@@ -267,16 +448,9 @@ def play_decimal_positions_section(scene):
         run_time=1.1,
     )
     scene.play(FadeIn(left_digit), FadeIn(two_position_summary), run_time=0.8)
-
-    for value in range(1, 100):
-        left_value, right_value = f"{value:02d}"
-        next_left = Text(left_value, color=YELLOW_D, weight=BOLD).scale(1.25).move_to(left_box)
-        next_right = Text(right_value, color=YELLOW_D, weight=BOLD).scale(1.25).move_to(right_box)
-        scene.play(
-            Transform(left_digit, next_left),
-            Transform(current_digit, next_right),
-            run_time=0.04,
-        )
+    scene.remove(left_digit, current_digit)
+    scene.add(left_digit_live, right_digit_live)
+    scene.play(two_digit_value.animate.set_value(99), run_time=2.4, rate_func=linear)
 
     scene.wait(1.2)
     scene.play(
@@ -287,20 +461,157 @@ def play_decimal_positions_section(scene):
     )
     scene.play(FadeIn(pattern_intro, shift=0.15 * DOWN), run_time=0.9)
     scene.play(Write(pattern), run_time=1.6)
-    scene.wait(1.1)
-    scene.wait(2.2)
+    scene.play(Indicate(pattern_base_ten, scale_factor=1.18, color=YELLOW_D), run_time=1.0)
+    scene.play(FadeIn(base_word, shift=0.08 * RIGHT), TransformFromCopy(pattern_base_ten, base_ten_copy), run_time=1.6)
+    scene.play(Create(base_ten_highlight), run_time=0.9)
+    scene.wait(0.8)
+    scene.play(
+        FadeOut(count_intro),
+        FadeOut(two_position_title, shift=0.1 * UP),
+        FadeOut(digit_box),
+        FadeOut(left_digit_live),
+        FadeOut(right_digit_live),
+        FadeOut(pattern_intro),
+        FadeOut(pattern),
+        run_time=0.7,
+    )
+    scene.play(FadeIn(fixed_relation_intro, shift=0.12 * DOWN), run_time=0.8)
+    scene.play(LaggedStart(*[Write(example) for example in fixed_relation_examples], lag_ratio=0.22), run_time=1.8)
+    scene.play(FadeIn(fixed_relation_caption, shift=0.1 * DOWN), Create(fixed_relation_caption_box), run_time=0.9)
+    scene.wait(1.4)
+    scene.play(
+        FadeOut(fixed_relation_intro, shift=0.12 * UP),
+        FadeOut(fixed_relation_examples, shift=0.12 * UP),
+        FadeOut(fixed_relation_caption, shift=0.12 * UP),
+        FadeOut(fixed_relation_caption_box),
+        FadeOut(base_ten_highlight),
+        FadeOut(base_ten_callout),
+        run_time=0.8,
+    )
+    scene.play(FadeIn(ninety_five, shift=0.1 * DOWN), run_time=0.7)
+    scene.play(TransformMatchingTex(ninety_five, ninety_five_breakdown), run_time=1.2)
+    scene.play(Write(ninety_five_expanded), run_time=1.3)
+    scene.play(FadeIn(place_value_caption, shift=0.1 * DOWN), run_time=0.7)
+    scene.wait(1.4)
+    scene.play(
+        FadeOut(ninety_five_breakdown, shift=0.12 * UP),
+        FadeOut(ninety_five_expanded, shift=0.12 * UP),
+        FadeOut(place_value_caption, shift=0.12 * UP),
+        run_time=0.8,
+    )
+    scene.play(FadeIn(binary_intro, shift=0.15 * DOWN), run_time=1.0)
+    scene.play(FadeIn(binary_bit_note, shift=0.12 * DOWN), run_time=0.8)
+    scene.play(
+        FadeIn(binary_one_position_title, shift=0.15 * RIGHT),
+        Create(binary_digit_box),
+        FadeIn(binary_current_digit),
+        run_time=1.0,
+    )
+    scene.play(FadeIn(binary_one_position_summary), run_time=0.8)
+    next_binary_digit = Text("1", color=GREEN_D, weight=BOLD).scale(1.25)
+    next_binary_digit.move_to(binary_digit_box)
+    scene.play(Transform(binary_current_digit, next_binary_digit), run_time=0.5)
+    scene.wait(0.6)
+    scene.play(FadeIn(binary_summary_divider), run_time=0.5)
+    scene.play(
+        FadeOut(binary_one_position_title, shift=0.1 * UP),
+        FadeIn(binary_two_position_title, shift=0.1 * UP),
+        Transform(binary_digit_box, binary_two_digit_boxes),
+        Transform(binary_current_digit, binary_right_digit),
+        run_time=1.1,
+    )
+    scene.play(FadeIn(binary_left_digit), FadeIn(binary_two_position_summary), run_time=0.8)
+    scene.remove(binary_left_digit, binary_current_digit)
+    scene.add(binary_left_digit_live, binary_right_digit_live)
+    scene.play(binary_two_digit_value.animate.set_value(3), run_time=1.8, rate_func=linear)
+    scene.wait(0.8)
+    scene.play(
+        FadeOut(binary_intro),
+        FadeOut(binary_bit_note),
+        FadeOut(binary_one_position_title, shift=0.1 * UP),
+        FadeOut(binary_two_position_title, shift=0.1 * UP),
+        FadeOut(binary_digit_box),
+        FadeOut(binary_left_digit_live),
+        FadeOut(binary_right_digit_live),
+        FadeOut(binary_one_position_summary, shift=0.15 * DOWN),
+        FadeOut(binary_summary_divider, shift=0.15 * DOWN),
+        FadeOut(binary_two_position_summary, shift=0.15 * DOWN),
+        run_time=0.7,
+    )
+    scene.play(FadeIn(binary_pattern_intro, shift=0.15 * DOWN), run_time=0.9)
+    scene.play(Write(binary_pattern), run_time=1.6)
+    scene.play(Indicate(binary_pattern_base_two, scale_factor=1.18, color=GREEN_D), run_time=1.0)
+    scene.play(FadeIn(binary_base_word, shift=0.08 * RIGHT), TransformFromCopy(binary_pattern_base_two, binary_base_two_copy), run_time=1.6)
+    scene.play(Create(binary_base_highlight), run_time=0.9)
+    scene.wait(0.8)
+    scene.play(
+        FadeOut(binary_pattern_intro),
+        FadeOut(binary_pattern),
+        run_time=0.7,
+    )
+    scene.play(FadeIn(binary_relation_intro, shift=0.12 * DOWN), run_time=0.8)
+    scene.play(LaggedStart(*[Write(example) for example in binary_relation_examples], lag_ratio=0.22), run_time=1.8)
+    scene.play(FadeIn(binary_relation_caption, shift=0.1 * DOWN), Create(binary_relation_caption_box), run_time=0.9)
+    scene.wait(1.4)
+    scene.play(
+        FadeOut(binary_relation_intro, shift=0.12 * UP),
+        FadeOut(binary_relation_examples, shift=0.12 * UP),
+        FadeOut(binary_relation_caption, shift=0.12 * UP),
+        FadeOut(binary_relation_caption_box),
+        FadeOut(binary_base_highlight),
+        FadeOut(binary_base_callout),
+        run_time=0.8,
+    )
+    scene.play(FadeIn(binary_101, shift=0.1 * DOWN), run_time=0.7)
+    scene.play(TransformMatchingTex(binary_101, binary_101_breakdown), run_time=1.2)
+    scene.play(Write(binary_101_expanded), run_time=1.0)
+    scene.play(FadeIn(binary_place_value_caption, shift=0.1 * DOWN), run_time=0.7)
+    scene.wait(2.0)
     clear_stage(
         scene,
         count_intro,
         two_position_title,
         digit_box,
-        current_digit,
-        left_digit,
+        left_digit_live,
+        right_digit_live,
         one_position_summary,
         summary_divider,
         two_position_summary,
         pattern_intro,
         pattern,
+        base_ten_highlight,
+        base_ten_callout,
+        fixed_relation_intro,
+        fixed_relation_examples,
+        fixed_relation_caption,
+        fixed_relation_caption_box,
+        ninety_five,
+        ninety_five_breakdown,
+        ninety_five_expanded,
+        place_value_caption,
+        binary_intro,
+        binary_bit_note,
+        binary_one_position_title,
+        binary_digit_box,
+        binary_current_digit,
+        binary_one_position_summary,
+        binary_two_position_title,
+        binary_summary_divider,
+        binary_two_position_summary,
+        binary_left_digit_live,
+        binary_right_digit_live,
+        binary_pattern_intro,
+        binary_pattern,
+        binary_base_highlight,
+        binary_base_callout,
+        binary_relation_intro,
+        binary_relation_examples,
+        binary_relation_caption,
+        binary_relation_caption_box,
+        binary_101,
+        binary_101_breakdown,
+        binary_101_expanded,
+        binary_place_value_caption,
     )
 
 

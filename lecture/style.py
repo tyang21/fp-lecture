@@ -24,4 +24,12 @@ def make_section_title(text):
 
 
 def clear_stage(scene, *mobjects):
-    scene.play(*[FadeOut(mob) for mob in mobjects], run_time=0.7)
+    visible_mobjects = []
+    for mob in mobjects:
+        if mob in scene.mobjects:
+            visible_mobjects.append(mob)
+            continue
+        visible_mobjects.extend(submob for submob in mob.submobjects if submob in scene.mobjects)
+    visible_mobjects = list(dict.fromkeys(visible_mobjects))
+    if visible_mobjects:
+        scene.play(*[FadeOut(mob) for mob in visible_mobjects], run_time=0.7)
